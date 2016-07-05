@@ -1,0 +1,145 @@
+module xCalc(
+	
+	input wire clk,
+	input wire reset,
+	input wire [11:0] sens1,		//misura sensore1
+	input wire [11:0] sens2,		//misura sensore2
+	input wire [11:0] sens3,		//misura sensore3
+	input wire [11:0]	xSensor1,	//centri dei rispettivi sensori
+	input wire [11:0]	xSensor2,
+	input wire [11:0]	xSensor3,
+	input wire [11:0]	ySensor1,
+	input wire [11:0]	ySensor2,
+	input wire [11:0]	ySensor3,
+	input wire [11:0]	maxDistance,	// distanza massima dei sensori
+	input wire [11:0]	minDistance,	// distanza minima dei sensori
+	input wire [4:0] numberRow,
+	input wire [4:0] numberColumn,
+	
+	output wire [11:0] axisX,
+	output wire [11:0] axisY,
+	output wire [35:0] Linee //GPIO_1
+
+
+);
+
+
+	reg [11:0] xValue;
+	reg [11:0] yValue;
+	//wire [35:0] Linee;
+	//assign  GPIO_1 [35:0] = Linee;
+	
+/*	wire [11:0] measure1;
+	wire [11:0] measure2;
+	wire [11:0] measure3;
+	
+	assign measure1 [11:0] = sens1;
+	assign measure2 [11:0] = sens2;
+	assign measure3 [11:0] = sens3;
+*/
+	
+	//value 
+	wire [11:0] a1;
+	wire [11:0] b1;
+	wire [11:0] r1;
+	wire [11:0] a2;
+	wire [11:0] b2;
+	wire [11:0] r2;
+	wire [11:0] a3;
+	wire [11:0] b3;
+	wire [11:0] r3;
+//	reg [4:0] c1;
+//	reg [4:0] c2;
+//	reg [4:0] c3;
+	wire [11:0] c1;
+	wire [11:0] c2;
+	wire [11:0] c3;
+	reg [11:0] valueX;
+	reg [11:0] valueY;
+	assign a1 [11:0] = xSensor1;
+	assign b1 [11:0] = ySensor1;
+	assign r1 [11:0] = sens1;
+	assign a2 [11:0] = xSensor2;
+	assign b2 [11:0] = ySensor2;
+	assign r2 [11:0] = sens2;
+	assign a3 [11:0] = xSensor3;
+	assign b3 [11:0] = ySensor3;
+	assign r3 [11:0] = sens3;
+	assign c1 [11:0] = (a1 * a1) + (b1 * b1) - (r1 * r1);
+	assign c2 [11:0] = (a2 * a2) + (b2 * b2) - (r2 * r2);
+	assign c3 [11:0] = (a3 * a3) + (b3 * b3) - (r3 * r3);
+/*	assign valueX [11:0] = -((( c1 - c2 ) * ( c1 - c2 )) / (((2 * a2) - (2 * a1))*((2 * a2) - (2 * a1)) * ((2 * b1) - (2 * b2))));
+	assign valueY [11:0] = ( c1 - c2 ) /(((2 * b1) - (2 * b2))*((2 * b1) - (2 * b2)));
+	
+/*
+always@ (posedge clk or posedge reset)
+	begin
+		
+		if (reset)
+			begin
+				xValue <= 4'b0000;
+				yValue <= 4'b0000;
+			end
+					
+		else 
+			begin
+			
+//				xValue <= -((( c1 - c2 ) * ( c1 - c2 )) / (((2 * a2) - (2 * a1))*((2 * a2) - (2 * a1)) * ((2 * b1) - (2 * b2))));
+//				yValue <= ( c1 - c2 ) /(((2 * b1) - (2 * b2))*((2 * b1) - (2 * b2)));
+				
+/*				if (xValue < 0)
+					xValue = - xValue;
+									
+				if (yValue < 0)
+					yValue = - yValue;
+*/			
+/*
+				xValue <= valueX;
+				yValue <= valueY;
+				
+			end
+		end	*/
+			
+always@ (posedge clk or posedge reset)
+	begin
+		
+		if (reset)
+			begin
+				valueX <= 11'b00000000000;
+				valueY <= 11'b00000000000;
+			end
+			
+		else if (sens1 > maxDistance || sens2 > maxDistance || sens3 > maxDistance)
+//		else if (sens1 > maxDistance)// || sens2 > 100 || sens3 > 100)
+			begin
+				valueX <= 11'b11111111111;
+				valueY <= 11'b11111111111;
+			end
+					
+		else //if (sens1 <= maxDistance && sens2 <= maxDistance && sens3 <= maxDistance)
+			begin	
+				if (maxDistance< r1 + r2)
+					begin
+						valueX <= -((( c1 - c2 ) * ( c1 - c2 )) / (((2 * a2) - (2 * a1))*((2 * a2) - (2 * a1)) * ((2 * b1) - (2 * b2))));
+						valueY <= ( c1 - c2 ) /(((2 * b1) - (2 * b2))*((2 * b1) - (2 * b2)));
+					end
+				else if (maxDistance< r3 + r2)
+					begin
+						valueX <= -((( c2 - c3 ) * ( c2 - c3 )) / (((2 * a3) - (2 * a2))*((2 * a3) - (2 * a2)) * ((2 * b2) - (2 * b3))));
+						valueY <= ( c2 - c3 ) /(((2 * b2) - (2 * b3))*((2 * b2) - (2 * b3)));
+					end
+				else if (maxDistance< r1 + r2)
+					begin
+						valueX <= -((( c3 - c1 ) * ( c3 - c1 )) / (((2 * a1) - (2 * a3))*((2 * a1) - (2 * a3)) * ((2 * b3) - (2 * b1))));
+						valueY <= ( c3 - c1 ) /(((2 * b3) - (2 * b1))*((2 * b3) - (2 * b1)));
+					end
+			end
+		end	
+			
+	assign axisX [11:0] = valueX; // (maxDistance / numberRow);
+	assign axisY [11:0] = valueY; // (maxDistance / numberColumn);
+
+//converter test2(.clk(clk), .numeroY(20), .numeroX(20), .maxDistance(100), .minDistance(0), .numberRow(8), .numberColumn(8), .Linee(Linee));
+converter toValueLed(.clk(clk),  .numeroY(axisY), .numeroX(axisY), .maxDistance(maxDistance), .minDistance(minDistance), .numberRow(numberRow), .numberColumn(numberColumn), .Linee(Linee));
+	
+	endmodule

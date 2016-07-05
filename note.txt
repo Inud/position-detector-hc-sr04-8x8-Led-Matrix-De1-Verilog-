@@ -1,0 +1,2 @@
+diffClock block: cambio control nel main e nell'if di diffClock
+main: aggiunto [31:0] al alla riga collegamenti nel

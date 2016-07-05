@@ -1,0 +1,46 @@
+module sqrtModule(
+	input wire clk,
+	input wire reset,
+	
+	input wire xValue,
+	input wire [11:0]	sens3,
+	input wire [11:0]	xSensor3,
+	input wire [11:0]	ySensor3,
+	
+	input wire [11:0]	maxDistance,	// distanza massima dei sensori
+	input wire [11:0]	minDistance,	// distanza minima dei sensori
+	input wire [4:0] numberRow,
+	input wire [4:0] numberColumn,
+	
+	output wire valueX,
+	output wire	valueY1,
+	output wire [35:0] Linee //GPIO_1
+);
+
+reg [11:0] count;
+wire [11:0] xProvv;
+wire [11:0] yProvv;
+
+always@ (posedge clk or posedge reset)
+	begin
+		
+		if (reset)
+			begin
+				xProvv <= 11'b00000000000;
+				yProvv <= 11'b00000000000;
+			end
+			
+		else if (sens3 > maxDistance)
+			yProvv <= 11'b11111111111;
+				
+		else
+			begin
+				if (xValue == xSensor3)
+					yProvv <= sens3;
+				
+				else if (xValue > xSensor3)
+					
+			
+			end
+
+endmodule

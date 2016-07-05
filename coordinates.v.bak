@@ -1,0 +1,19 @@
+module coordinates(
+
+	input wire clk,
+	input wire reset,
+	
+	output wire [11:0] sens1,		//misura sensore1
+	output wire [11:0] sens2,		//misura sensore2
+	output wire [11:0] sens3,		//misura sensore3
+	output wire [11:0]	xSensor1,	//centri dei rispettivi sensori
+	output wire [11:0]	xSensor2,
+	output wire [11:0]	xSensor3,
+	output wire [11:0]	ySensor1,
+	output wire [11:0]	ySensor2,
+	output wire [11:0]	ySensor3,
+	output wire [11:0]	maxDistance,	// distanza massima dei sensori
+);
+
+
+

@@ -1,0 +1,44 @@
+module matrixDriver(
+	input wire clk,
+	input wire reset,
+	input wire [5:0] ledR,
+	
+	output wire [7:0] anodR,
+	output wire [7:0] anodG,
+	output wire [7:0] catod
+	
+);
+
+	reg i;
+	reg j;
+	reg [3:0] anodeG;
+	reg [3:0] anodeR;
+	reg [3:0] catode;
+
+always @(posedge clk or posedge reset)
+	begin
+		if (reset)
+			begin
+				anodeG <= 4'b0000;
+				anodeR <= 4'b0000;
+				catode <= 4'b1111;
+			end
+		
+		else if (ledR == 1)
+			begin
+				anodeG <= 4'b1110;
+				anodeR <= 4'b0001;
+				catode <= 4'b0000;
+				
+			end
+			
+			
+			
+	end
+	
+	assign anodG = anodeG;
+	assign anodR = anodeR;
+	assign catod = catode;
+	
+
+endmodule

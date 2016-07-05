@@ -1,0 +1,124 @@
+module clockSwitch(
+	input wire clk,
+	input wire reset,
+	input wire switchClock1,
+	input wire switchClock2,
+	input wire switchClock3,
+	
+	output reg clk1,
+	output reg clk2,
+	output reg clk3,
+		
+);
+
+]
+reg countClk;
+
+always@ (posedge clk or posedge reset)
+	begin
+		
+		if (reset)
+			begin
+				count = 0;
+			end
+			
+		else
+			begin
+				
+				if (count <= gapTime - 1)
+					begin
+						if (countClk < 1)
+							begin
+								countClk <= countClk + 1;
+								clk1 <=1'b0;
+							end
+						else
+							begin
+								countClk <=0;
+								clk1 <=1'b1;
+							end
+//						clk1 <= clk;
+						clk2 <= 1'b0;
+						clk3 <= 1'b0;
+						count = count + 1;
+						resetted1 <= 1'b0;
+						resetted2<= 1'b0;
+						resetted3<= 1'b0;
+					end
+				else if(count == gapTime)
+					resetted2 <= 1'b1;
+				else if(count > gapTime && count <= gapTime*2 -1)
+					begin
+						if (countClk < 1)
+							begin
+								countClk <= countClk + 1;
+								clk2 <=1'b0;
+							end
+						else
+							begin
+								countClk <=0;
+								clk2 <=1'b1;
+							end
+						clk1 <= 1'b0;
+//						clk2 <= clk;
+						clk3 <= 1'b0;
+						count = count + 1;
+						resetted1 <= 1'b0;
+						resetted2<= 1'b0;
+						resetted3<= 1'b0;
+					end
+				else if(count == gapTime*2)
+					resetted3 <= 1'b1;
+				else if(count > gapTime*2 && count <= gapTime*3)
+					begin
+						if (countClk < 1)
+							begin
+								countClk <= countClk + 1;
+								clk3 <=1'b0;
+							end
+						else
+							begin
+								countClk <=0;
+								clk3 <=1'b1;
+							end
+						clk1 <= 1'b0;
+						clk2 <= 1'b0;
+//						clk3 <= clk;
+						count = count + 1;
+						resetted1 <= 1'b0;
+						resetted2<= 1'b0;
+						resetted3<= 1'b0;
+					end
+				else if(count > gapTime*3 && count <= gapTime*4)
+					begin
+						clk1 <= 1'b0;
+						clk2 <= 1'b0;
+						clk3 <= 1'b0;
+						count = count + 1;
+						resetted1 <= 1'b0;
+						resetted2<= 1'b0;
+						resetted3<= 1'b0;
+					end
+				else if(count > gapTime*4)
+					begin
+						count <=0;
+						resetted1 <= 1'b1;
+					end
+			end
+	end
+	
+
+	
+endmodule
+
+/*
+if (count<240000)
+	begin
+		count <= count + 1;
+		clk_div <=1'b0;
+	end
+else
+	begin
+		count <=0;
+		clk_div <=1'b1;
+	end*/

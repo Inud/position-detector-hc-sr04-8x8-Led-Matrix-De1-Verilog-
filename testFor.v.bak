@@ -1,0 +1,31 @@
+ module testFor(
+ input clk,
+ output wire [35:0] GPIO_1
+ );
+ 
+	assign clk = CLOCK_50;
+	wire [7:0] AnodeR;
+	wire [7:0] AnodeG;
+	wire [7:0] Catode;
+	 
+	assign  GPIO_1 [7:0] = AnodeG;
+	assign  GPIO_1 [15:8] = AnodeR;
+	assign GPIO_1 [23:16] = Catode;
+	reg [4:0] Led;
+	
+ always@ (posedge clk)
+	begin
+		reg i = 1;
+		if (count >= 50000000)
+			begin
+				matrixDriver test(.clk(clk),.reset(reset),.ledR(i),.anodR(AnodeR),.anodG(AnodeG),.catod(Catode) );
+				count = 0;
+				i = i+1;
+			end
+		 else
+			begin
+				count = count + 1;
+			end
+	 
+	 
+	end

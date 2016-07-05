@@ -1,0 +1,17 @@
+module Limit(
+	input wire clk,
+	input wire [11:0] distance,
+	
+	output wire [7:0] LEDR
+	
+);
+
+always @(posedge clk)
+	begin	
+		if (distance>100)
+			LEDR <= 1'b1;
+		else
+			LEDR <= 1'b0;
+	end
+	
+endmodule
